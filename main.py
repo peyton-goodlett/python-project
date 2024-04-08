@@ -187,13 +187,53 @@ class simpleBattleship:
             print("Congrats! You hit all the enemy ships!")
             print("This was the enemy board: ")
             print(simpleBattleship.makeBoardPretty(board))
+
+# bulls and cows is an old paper game. both players write a secret 4 digit number. they have to try to guess the other player's number, whoever does it first wins.
+# after a guess, the game gives you a certain number of bulls and cows. bulls meaning a number is correct and is in the correct spot
+# while cows mean its the correct number but incorrect spot
+class BullsAndCows:
+    def main():
+        guesses = []
+        bot_num = random.randint(1000, 9999)
+        print('Welcome to Bulls and Cows!')
+        print('We have generated a random 4 digit number. You must guess the number.')
+        print('If a digit in the number you guess is correct and in the correct spot, you will get 1 bull (B).')
+        print('If a digit is correct but not in the correct spot, you will get a cow (C).')
+        print('You get 15 guesses total!')
+        print(bot_num)
+        while len(guesses) <= 15:
+            bulls = 0
+            cows = 0
+            guess = int(input("Guess a 4 digit number: "))
+            while len(str(guess)) > 4:
+                print("Not a 4 digit number.")
+                guess = int(input("Guess a 4 digit number: "))
+            guesses.append(guess)
+            if guess == bot_num:
+                print("Congrats! You guessed the bot's number: " + str(bot_num) + " in " + str(len(guesses) - 1) + " guesses!")
+                exit()
+            # its a little cursed since you cant use len() or [i] with integers but it works
+            for i in range(len(str(bot_num))):
+                if str(guess)[i] == str(bot_num)[i]:
+                    bulls += 1
+                elif str(guess)[i] != str(bot_num)[i] and str(guess)[i] in str(bot_num):
+                    cows += 1
+            print(str(bulls) + " Bulls " + str(cows) + " Cows")
+            print("All Guesses:")
+            for i in range(len(guesses)):
+                print(str(i + 1) + " " + str(guesses[i]))
+        print("No more guesses! Game over :(")
+
+# bulls and cows start function
+# BullsAndCows.main()
+
 # tictactoe start functions
 # board = TicTacToe.init_Board()
 # symbol1, symbol2 = TicTacToe.plrSymbols()
 # TicTacToe.main(board, symbol1, symbol2)
 
 # battleship start function
-simpleBattleship.main()
+# simpleBattleship.main()
 
 # for checking if the ship generation works properly
 # print(simpleBattleship.makeBoardPretty(simpleBattleship.createShips(simpleBattleship.generateBoard())))

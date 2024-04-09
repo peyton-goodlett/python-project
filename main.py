@@ -1,4 +1,4 @@
-# Peyton Goodlett last updated 4/8/24
+# Peyton Goodlett last updated 4/9/24
 import random
 # using classes to organize games better
 class TicTacToe:
@@ -67,16 +67,16 @@ class TicTacToe:
         while row < 0 or row > 2:
             print("Invalid input.")
             row = int(input("Pick a row: [upper row: 0, middle row: 1, lower row: 2]: "))
-        col = int(input("Pick a row: [left column: 0, middle column: 1, right column: 2]: ")) 
+        col = int(input("Pick a column: [left column: 0, middle column: 1, right column: 2]: ")) 
         while col < 0 or col > 2:
             print("Invalid input.")
-            col = int(input("Pick a row: [left column: 0, middle column: 1, right column: 2]: "))
+            col = int(input("Pick a column: [left column: 0, middle column: 1, right column: 2]: "))
         while board[row][col] == symbol1 or board[row][col] == symbol2:
             print("Spot already filled.")
             print("Current Board:")
             print(TicTacToe.makeBoardPretty(board))
             row = int(input("Pick a row: [upper row: 0, middle row: 1, lower row: 2]: "))
-            col = int(input("Pick a row: [left column: 0, middle column: 1, right column: 2]: "))
+            col = int(input("Pick a column: [left column: 0, middle column: 1, right column: 2]: "))
         if curPlr == symbol1:
             board[row][col] = symbol1
         else:
@@ -129,7 +129,7 @@ class simpleBattleship:
                 for i in range(5):
                     if randomDir == "horizontal":
                         if randomRow+i >= 9:
-                            if board[randomRow-i][randomCol] == " ":
+                            if board[randomRow-i][randomCol] == ' ':
                                 board[randomRow-i][randomCol] = "O"
                                 break
                         else:
@@ -224,15 +224,111 @@ class BullsAndCows:
             for i in range(len(guesses)):
                 print(str(i + 1) + " " + str(guesses[i]))
         print("No more guesses! Game over :(")
-
+class Hangman:
+    def main():
+        wordbank = "dog cat wolf quentin mason william theron peyton printer electric zebra lion rhino laptop computer ilead hangman video analyze school homework class classroom goose table chair abdominous train big boulder pasta document google fortnite roblox minecraft nike hoodie buxom bologna tsunami island ocean believe".split()
+        hangman_stages = ['''
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========''',
+'''
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========''', 
+'''
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========''',
+'''
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========''',
+'''
+  +---+
+  |   |
+  O   |
+ /|\  |
+      |
+      |
+=========''',
+'''
+  +---+
+  |   |
+  O   |
+ /|\  |
+ /    |
+      |
+=========''',
+'''
+  +---+
+  |   |
+  O   |
+ /|\  |
+ / \  |
+      |
+=========''']
+        word = random.choice(wordbank)
+        wordL = len(word)
+        tries = 0
+        guessed = []
+        guessed_str = ""
+        currentHangman = 0
+        for x in range(wordL):
+                guessed.append("_")
+        print("Welcome to Hangman!")
+        while True:
+            if "_" not in guessed:
+                print("Congrats! You guessed the word " + word + " in " + tries + " tries.")
+            guessed_str = ""
+            if tries == 7:
+                print("You failed to guess the word!")
+                exit()
+            for c in range(len(guessed)):
+                guessed_str += guessed[c]
+            print("It is a " + str(wordL) + " letter word.")
+            print("Word status: " + guessed_str)
+            print("Remaining tries: " + str(7 - tries))
+            print("Current Hangman: " + hangman_stages[currentHangman])
+            guess = str(input("Enter a single letter: "))
+            while len(guess) > 1:
+                print("Invalid input.")
+                guess = str(input("Enter a single letter: "))
+            if guess in word:
+                print("Good job! " + guess + " was in the word!")
+                for i in range(wordL):
+                    if word[i] == guess:
+                        guessed[i] = guess
+                        tries += 1
+            else:
+                print("Wrong! " + guess + " was not in the word!")
+                currentHangman += 1
+                tries += 1
+                
 while True:
     print("Python Project")
     print("Games:")
     print("1. TicTacToe")
     print("2. Simple Battleship")
     print("3. Bulls and Cows")
+    print("4. Hangman")
     option = int(input("Enter a number to play a game: "))
-    while option < 1 or option > 3:
+    while option < 1 or option > 4:
         print("Invalid option.")
         option = int(input("Enter a number to play a game: "))
     if option == 1:
@@ -243,8 +339,11 @@ while True:
         simpleBattleship.main()
     elif option == 3:
         BullsAndCows.main()
-
-# hangman next
+    elif option == 4:
+        Hangman.main()
+        
+# hangman start functions
+# Hangman.main()
 
 # bulls and cows start function
 # BullsAndCows.main()

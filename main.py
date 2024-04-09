@@ -225,6 +225,27 @@ class BullsAndCows:
                 print(str(i + 1) + " " + str(guesses[i]))
         print("No more guesses! Game over :(")
 
+while True:
+    print("Python Project")
+    print("Games:")
+    print("1. TicTacToe")
+    print("2. Simple Battleship")
+    print("3. Bulls and Cows")
+    option = int(input("Enter a number to play a game: "))
+    while option < 1 or option > 3:
+        print("Invalid option.")
+        option = int(input("Enter a number to play a game: "))
+    if option == 1:
+        board = TicTacToe.init_Board()
+        symbol1, symbol2 = TicTacToe.plrSymbols()
+        TicTacToe.main(board, symbol1, symbol2)
+    elif option == 2:
+        simpleBattleship.main()
+    elif option == 3:
+        BullsAndCows.main()
+
+# hangman next
+
 # bulls and cows start function
 # BullsAndCows.main()
 

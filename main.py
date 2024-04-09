@@ -1,3 +1,4 @@
+# Peyton Goodlett last updated 4/8/24
 import random
 # using classes to organize games better
 class TicTacToe:

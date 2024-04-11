@@ -1,4 +1,4 @@
-# Peyton Goodlett last updated 4/9/24
+# Peyton Goodlett
 import random
 # using classes to organize games better
 class TicTacToe:
@@ -294,10 +294,10 @@ class Hangman:
         print("Welcome to Hangman!")
         while True:
             if "_" not in guessed:
-                print("Congrats! You guessed the word " + word + " in " + tries + " tries.")
+                print("Congrats! You guessed the word " + word + " in " + str(tries) + " tries.")
             guessed_str = ""
             if tries == 7:
-                print("You failed to guess the word!")
+                print("You failed to guess the word " + word + ".")
                 exit()
             for c in range(len(guessed)):
                 guessed_str += guessed[c]
@@ -319,7 +319,31 @@ class Hangman:
                 print("Wrong! " + guess + " was not in the word!")
                 currentHangman += 1
                 tries += 1
-                
+class Unscramble:
+    def scramble():
+        wordbank = "dog cat wolf quentin mason william theron peyton printer electric zebra lion rhino laptop computer ilead hangman video analyze school homework class classroom goose table chair abdominous train big boulder pasta document google fortnite roblox minecraft nike hoodie buxom bologna tsunami island ocean believe".split()
+        randomW = random.choice(wordbank)
+        scrambled = ""
+        for i in range(len(randomW)):
+            new_l = random.randint(0, len(randomW) - 1)
+            scrambled += randomW[new_l]
+        return (randomW, scrambled)
+    def main():
+        word, scrambled = Unscramble.scramble()
+        tries = 0
+        print("Welcome to Unscramble!")
+        print("We have scrambled a random word. You must unscramble it and input it!")
+        while tries <= 5:
+            tries += 1
+            print("Scrambled word: " + scrambled)
+            plr_try = str(input("Enter your unscrambled word: "))
+            if plr_try != word:
+                print("Incorrect! Please try again.")
+            else:
+                print("Congratuations! You guessed the word " + word + " in " + str(tries) + " try!")
+                exit()
+        print("You were unable to guess the word! It was " + word + "!")
+        exit()         
 while True:
     print("Python Project")
     print("Games:")
@@ -327,8 +351,9 @@ while True:
     print("2. Simple Battleship")
     print("3. Bulls and Cows")
     print("4. Hangman")
+    print("5. Unscramble")
     option = int(input("Enter a number to play a game: "))
-    while option < 1 or option > 4:
+    while option < 1 or option > 5:
         print("Invalid option.")
         option = int(input("Enter a number to play a game: "))
     if option == 1:
@@ -341,7 +366,8 @@ while True:
         BullsAndCows.main()
     elif option == 4:
         Hangman.main()
-        
+    elif option == 5:
+        Unscramble.main()
 # hangman start functions
 # Hangman.main()
 

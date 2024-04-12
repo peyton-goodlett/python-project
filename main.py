@@ -295,6 +295,7 @@ class Hangman:
         while True:
             if "_" not in guessed:
                 print("Congrats! You guessed the word " + word + " in " + str(tries) + " tries.")
+                break
             guessed_str = ""
             if tries == 7:
                 print("You failed to guess the word " + word + ".")
@@ -314,7 +315,6 @@ class Hangman:
                 for i in range(wordL):
                     if word[i] == guess:
                         guessed[i] = guess
-                        tries += 1
             else:
                 print("Wrong! " + guess + " was not in the word!")
                 currentHangman += 1

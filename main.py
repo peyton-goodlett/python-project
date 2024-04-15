@@ -324,9 +324,16 @@ class Unscramble:
         wordbank = "dog cat wolf quentin mason william theron peyton printer electric zebra lion rhino laptop computer ilead hangman video analyze school homework class classroom goose table chair abdominous train big boulder pasta document google fortnite roblox minecraft nike hoodie buxom bologna tsunami island ocean believe".split()
         randomW = random.choice(wordbank)
         scrambled = ""
-        for i in range(len(randomW)):
+        previous = ""
+        init_let = random.randint(0, len(randomW) - 1)
+        scrambled += randomW[init_let]
+        previous += randomW[init_let]
+        for i in range(len(randomW) - 1):
             new_l = random.randint(0, len(randomW) - 1)
+            while randomW[new_l] in previous:
+                new_l = random.randint(0, len(randomW) - 1)
             scrambled += randomW[new_l]
+            previous += randomW[new_l]
         return (randomW, scrambled)
     def main():
         word, scrambled = Unscramble.scramble()

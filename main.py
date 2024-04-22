@@ -3,10 +3,9 @@ import random
 # using classes to organize games better
 class TicTacToe:
     def init_Board():
-        # 2d list to serve as a 3 by 3 board
-        board = [["_","_","_"],
-                 ["_","_","_"],
-                 ["_","_","_"]]
+        board = [["0","0","0"],
+                 ["0","0","0"],
+                 ["0","0","0"]]
         return board
     def makeBoardPretty(board):
         rows = len(board)
@@ -22,48 +21,40 @@ class TicTacToe:
         else:
             symbol2 = "x"
         return (symbol1, symbol2)
-    # check all winning paths
     def WinnerWinnerChickenDinner(board, symbol1, symbol2):
         winner = False
-        # verticals
+        winSym = "None"
         for col in range(0, 3):
             if board[0][col] == board[1][col] == board[2][col] == symbol1:
                 winner = True
-                print(symbol1.upper() + " won!")
-                print(TicTacToe.makeBoardPretty(board))
+                winSym = symbol1
             elif board[0][col] == board[1][col] == board[2][col] == symbol2:
                 winner = True
-                print(symbol2.upper() + " won!")
-                print(TicTacToe.makeBoardPretty(board))
-        # horizontals
+                winSym = symbol2
+        
         for row in range(0, 3):
             if board[row][0] == board[row][1] == board[row][2] == symbol1:
                 winner = True
-                print(symbol1.upper() + " won!")
-                print(TicTacToe.makeBoardPretty(board))
+                winSym = symbol1
             elif board[row][0] == board[row][1] == board[row][2] == symbol2:
                 winner = True
-                print(symbol2.upper() + " won!")
-                print(TicTacToe.makeBoardPretty(board))
-        # diagonals
+                winSym = symbol2
+        
         if board[0][0] == board[1][1] == board[2][2] == symbol1:
             winner = True
-            print(symbol1.upper() + " won!")
-            print(TicTacToe.makeBoardPretty(board))
+            winSym = symbol1
         elif board[0][0] == board[1][1] == board[2][2] == symbol2:
             winner = True
-            print(symbol2.upper() + " won!")
-            print(TicTacToe.makeBoardPretty(board))
+            winSym = symbol2
+        
         if board[0][2] == board[1][1] == board[2][0] == symbol1:
             winner = True
-            print(symbol1.upper() + " won!")
-            print(TicTacToe.makeBoardPretty(board))
+            winSym = symbol1
         elif board[0][2] == board[1][1] == board[2][0] == symbol2:
             winner = True
-            print(symbol2.upper() + " won!")
-            print(TicTacToe.makeBoardPretty(board))
+            winSym = symbol2
         
-        return winner
+        return winner, winSym
         
     def gaming(board, symbol1, symbol2, turn):
         print("Current Board:")
@@ -91,6 +82,80 @@ class TicTacToe:
             board[row][col] = symbol1
         else:
             board[row][col] = symbol2
+    def minimax(board, symbol1, symbol2, turn):
+        points = 0
+        og_row = "None"
+        og_col = "None"
+        sadness = "We havent lost yet!"
+        # its able to prevent victorys 80% of the time (which is good, we need it to mess up like people do)
+        # it also can  look thru and try to find a victory move and choose that one not sure how efficient that is yet tho
+        while turn % 2 == 1:
+            for i in range(9 - turn):
+                row = random.randint(0,2)
+                col = random.randint(0,2)
+                while board[row][col] != "0":
+                    row = random.randint(0,2)
+                    col = random.randint(0,2)
+                board[row][col] = symbol1
+                winStatus, winSym = TicTacToe.WinnerWinnerChickenDinner(board,symbol1,symbol2)
+                if winStatus == True:
+                    og_row = row
+                    og_col = col
+                    break
+            if winStatus == True:
+                break
+                
+        while turn % 2 == 0:
+            fake_board = board
+            row = random.randint(0,2)
+            col = random.randint(0,2)
+            sym1row = random.randint(0,2)
+            sym1col = random.randint(0,2)
+            while fake_board[row][col] != "0":
+                row = random.randint(0,2)
+                col = random.randint(0,2)
+            fake_board[row][col] = symbol2
+            while fake_board[sym1row][sym1col] != "0":
+                sym1row = random.randint(0,2)
+                sym1col = random.randint(0,2)
+            fake_board[sym1row][sym1col] = symbol1
+            winStatus, winSym = TicTacToe.WinnerWinnerChickenDinner(fake_board, symbol1, symbol2)
+            while winStatus == False:
+                row = random.randint(0,2)
+                col = random.randint(0,2)
+                sym1row = random.randint(0,2)
+                sym1col = random.randint(0,2)
+                while fake_board[row][col] != "0":
+                    row = random.randint(0,2)
+                    col = random.randint(0,2)
+                fake_board[row][col] = symbol2
+                while fake_board[sym1row][sym1col] != "0":
+                    sym1row = random.randint(0,2)
+                    sym1col = random.randint(0,2)
+                fake_board[sym1row][sym1col] = symbol1
+                winStatus, winSym = TicTacToe.WinnerWinnerChickenDinner(fake_board, symbol1, symbol2)
+            if winStatus == True and winSym == symbol2:
+                og_row = row
+                og_col = col
+                break
+        turn += 1
+        return og_row, og_col, sadness
+            #finish later btw
+    def minimax_test():
+        board = [["o","0","x"],
+                 ["0","0","0"],
+                 ["x","x","o"]]
+        count = 8
+        row, col, sadness = TicTacToe.minimax(board, "x", "o", count)
+        if str(row) or str(col):
+            print(row)
+            print(col)
+            exit()
+        board[row][col] = "o"
+        print(TicTacToe.makeBoardPretty(board))
+        print(row)
+        print(col)
+        print(sadness)
     def main(board, symbol1, symbol2):
         count = 1
         winner = False
@@ -100,12 +165,13 @@ class TicTacToe:
                 print("Game over!")
                 if winner == False:
                     print("There was a tie!")
-            TicTacToe.gaming(board, symbol1, symbol2, count)
-            winner = TicTacToe.WinnerWinnerChickenDinner(board, symbol1, symbol2)
+            TicTacToe.gaming_test(board, symbol1, symbol2, count)
+            winner, winSym = TicTacToe.WinnerWinnerChickenDinner(board, symbol1, symbol2)
             count += 1
             if winner == True:
                 print("Game over!")
-# still debating whether to give a limited number of tries because of the small number of hitpoints
+                print(winSym.upper() + " won!")
+
 class simpleBattleship:
     def generateBoard():
         # this will create a 10x10 2d list. we will use random to choose a location and rotation for the ship and check if any of the spots are taken
@@ -210,7 +276,6 @@ class BullsAndCows:
         print('If a digit in the number you guess is correct and in the correct spot, you will get 1 bull (B).')
         print('If a digit is correct but not in the correct spot, you will get a cow (C).')
         print('You get 15 guesses total!')
-        print(bot_num)
         while len(guesses) <= 15:
             bulls = 0
             cows = 0
@@ -295,7 +360,6 @@ class Hangman:
         word = random.choice(wordbank)
         wordL = len(word)
         tries = 0
-        guess_amt = 0
         guessed = []
         guessed_str = ""
         currentHangman = 0
@@ -304,12 +368,12 @@ class Hangman:
         print("Welcome to Hangman!")
         while True:
             if "_" not in guessed:
-                print("Congrats! You guessed the word " + word + " in " + str(guess_amt) + " tries.")
+                print("Congrats! You guessed the word " + word + " in " + str(tries) + " tries.")
                 break
             guessed_str = ""
             if tries == 7:
                 print("You failed to guess the word " + word + ".")
-                break
+                exit()
             for c in range(len(guessed)):
                 guessed_str += guessed[c]
             print("It is a " + str(wordL) + " letter word.")
@@ -325,27 +389,22 @@ class Hangman:
                 for i in range(wordL):
                     if word[i] == guess:
                         guessed[i] = guess
-                        guess_amt += 1
             else:
                 print("Wrong! " + guess + " was not in the word!")
                 currentHangman += 1
                 tries += 1
-                guess_amt += 1
 class Unscramble:
     def scramble():
         wordbank = "dog cat wolf quentin mason william theron peyton printer electric zebra lion rhino laptop computer ilead hangman video analyze school homework class classroom goose table chair abdominous train big boulder pasta document google fortnite roblox minecraft nike hoodie buxom bologna tsunami island ocean believe".split()
         randomW = random.choice(wordbank)
         scrambled = ""
-        previous = ""
-        init_let = random.randint(0, len(randomW) - 1)
-        scrambled += randomW[init_let]
-        previous += randomW[init_let] # in order to not let the same letter be picked twice, we check if the selected letter is in previous
-        for i in range(len(randomW) - 1):
+        last_l = 0
+        for i in range(len(randomW)):
             new_l = random.randint(0, len(randomW) - 1)
-            while randomW[new_l] in previous:
+            if last_l == new_l:
                 new_l = random.randint(0, len(randomW) - 1)
+            last_l = new_l
             scrambled += randomW[new_l]
-            previous += randomW[new_l]
         return (randomW, scrambled)
     def main():
         word, scrambled = Unscramble.scramble()
@@ -360,8 +419,10 @@ class Unscramble:
                 print("Incorrect! Please try again.")
             else:
                 print("Congratuations! You guessed the word " + word + " in " + str(tries) + " try!")
-                break
-        print("You were unable to guess the word! It was " + word + "!")    
+                exit()
+        print("You were unable to guess the word! It was " + word + "!")
+        exit()   
+'''      
 while True:
     print("Python Project")
     print("Games:")
@@ -370,11 +431,7 @@ while True:
     print("3. Bulls and Cows")
     print("4. Hangman")
     print("5. Unscramble")
-    try:
-        option = int(input("Enter a number to play a game: "))
-    except ValueError:
-        print("You need to enter a number, not a letter.")
-        option = int(input("Enter a number to play a game: "))
+    option = int(input("Enter a number to play a game: "))
     while option < 1 or option > 5:
         print("Invalid option.")
         option = int(input("Enter a number to play a game: "))
@@ -390,6 +447,9 @@ while True:
         Hangman.main()
     elif option == 5:
         Unscramble.main()
+'''
+print('Hello, World!')
+TicTacToe.minimax_test()
 # hangman start functions
 # Hangman.main()
 

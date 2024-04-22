@@ -1,5 +1,6 @@
 # Peyton Goodlett
 import random
+import copy
 # using classes to organize games better
 class TicTacToe:
     def init_Board():
@@ -82,31 +83,33 @@ class TicTacToe:
             board[row][col] = symbol1
         else:
             board[row][col] = symbol2
-    def minimax(board, symbol1, symbol2, turn):
-        points = 0
+    def minimax(the_board, symbol1, symbol2, turn):
         og_row = "None"
         og_col = "None"
+        bard = copy.deepcopy(the_board)
         sadness = "We havent lost yet!"
         # its able to prevent victorys 80% of the time (which is good, we need it to mess up like people do)
         # it also can  look thru and try to find a victory move and choose that one not sure how efficient that is yet tho
         while turn % 2 == 1:
+            og_row = 'None'
+            og_col = 'None'
             for i in range(9 - turn):
+                fake_board = bard
                 row = random.randint(0,2)
                 col = random.randint(0,2)
-                while board[row][col] != "0":
+                while fake_board[row][col] != "0":
                     row = random.randint(0,2)
                     col = random.randint(0,2)
-                board[row][col] = symbol1
-                winStatus, winSym = TicTacToe.WinnerWinnerChickenDinner(board,symbol1,symbol2)
-                if winStatus == True:
+                fake_board[row][col] = symbol1
+                winStatus, winSym = TicTacToe.WinnerWinnerChickenDinner(fake_board,symbol1,symbol2)
+                if winStatus == True and winSym == symbol1:
                     og_row = row
                     og_col = col
                     break
             if winStatus == True:
                 break
-                
         while turn % 2 == 0:
-            fake_board = board
+            fake_board = copy.deepcopy(bard)
             row = random.randint(0,2)
             col = random.randint(0,2)
             sym1row = random.randint(0,2)
@@ -141,21 +144,30 @@ class TicTacToe:
         turn += 1
         return og_row, og_col, sadness
             #finish later btw
-    def minimax_test():
-        board = [["o","0","x"],
-                 ["0","0","0"],
-                 ["x","x","o"]]
-        count = 8
-        row, col, sadness = TicTacToe.minimax(board, "x", "o", count)
-        if str(row) or str(col):
-            print(row)
-            print(col)
-            exit()
-        board[row][col] = "o"
+    def minimax_test(board, symbol1, symbol2, turn):
+        print("Current Board:")
         print(TicTacToe.makeBoardPretty(board))
-        print(row)
-        print(col)
-        print(sadness)
+        if turn % 2 == 1:
+            print(symbol1.upper() + "'s turn!" )
+            row = int(input("Pick a row: [upper row: 0, middle row: 1, lower row: 2]: "))
+            while row < 0 or row > 2:
+                print("Invalid input.")
+                row = int(input("Pick a row: [upper row: 0, middle row: 1, lower row: 2]: "))
+            col = int(input("Pick a column: [left column: 0, middle column: 1, right column: 2]: ")) 
+            while col < 0 or col > 2:
+                print("Invalid input.")
+                col = int(input("Pick a column: [left column: 0, middle column: 1, right column: 2]: "))
+            while board[row][col] != "0":
+                print("Spot already filled.")
+                print("Current Board:")
+                print(TicTacToe.makeBoardPretty(board))
+                row = int(input("Pick a row: [upper row: 0, middle row: 1, lower row: 2]: "))
+                col = int(input("Pick a column: [left column: 0, middle column: 1, right column: 2]: "))
+            board[row][col] = symbol1
+        if turn % 2 == 0:
+            og_row, og_col, sadness = TicTacToe.minimax(board, symbol1, symbol2, turn)
+            board[og_row][og_col] = symbol2
+            print("Bot chose " + str(og_row) + " " + str(og_col))
     def main(board, symbol1, symbol2):
         count = 1
         winner = False
@@ -165,7 +177,7 @@ class TicTacToe:
                 print("Game over!")
                 if winner == False:
                     print("There was a tie!")
-            TicTacToe.gaming_test(board, symbol1, symbol2, count)
+            TicTacToe.minimax_test(board, symbol1, symbol2, count)
             winner, winSym = TicTacToe.WinnerWinnerChickenDinner(board, symbol1, symbol2)
             count += 1
             if winner == True:
@@ -422,7 +434,7 @@ class Unscramble:
                 exit()
         print("You were unable to guess the word! It was " + word + "!")
         exit()   
-'''      
+   
 while True:
     print("Python Project")
     print("Games:")
@@ -447,9 +459,6 @@ while True:
         Hangman.main()
     elif option == 5:
         Unscramble.main()
-'''
-print('Hello, World!')
-TicTacToe.minimax_test()
 # hangman start functions
 # Hangman.main()
 

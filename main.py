@@ -87,14 +87,16 @@ class TicTacToe:
         og_row = "None"
         og_col = "None"
         bard = copy.deepcopy(the_board)
-        sadness = "We havent lost yet!"
-        # its able to prevent victorys 80% of the time (which is good, we need it to mess up like people do)
-        # it also can  look thru and try to find a victory move and choose that one not sure how efficient that is yet tho
+        sadness = True
         while turn % 2 == 1:
             og_row = 'None'
             og_col = 'None'
-            for i in range(9 - turn):
-                fake_board = bard
+            checks = 0
+            while True:
+                checks += 1
+                if checks >= 15:
+                    break
+                fake_board = copy.deepcopy(bard)
                 row = random.randint(0,2)
                 col = random.randint(0,2)
                 while fake_board[row][col] != "0":
@@ -105,9 +107,11 @@ class TicTacToe:
                 if winStatus == True and winSym == symbol1:
                     og_row = row
                     og_col = col
+                    sadness = False
                     break
             if winStatus == True:
                 break
+            break
         while turn % 2 == 0:
             fake_board = copy.deepcopy(bard)
             row = random.randint(0,2)
@@ -123,6 +127,9 @@ class TicTacToe:
                 sym1col = random.randint(0,2)
             fake_board[sym1row][sym1col] = symbol1
             winStatus, winSym = TicTacToe.WinnerWinnerChickenDinner(fake_board, symbol1, symbol2)
+            check = any("0" in sublist for sublist in fake_board)
+            if check == False:
+                fake_board = copy.deepcopy(bard)
             while winStatus == False:
                 row = random.randint(0,2)
                 col = random.randint(0,2)
@@ -137,14 +144,17 @@ class TicTacToe:
                     sym1col = random.randint(0,2)
                 fake_board[sym1row][sym1col] = symbol1
                 winStatus, winSym = TicTacToe.WinnerWinnerChickenDinner(fake_board, symbol1, symbol2)
+                check = any("0" in sublist for sublist in fake_board)
+                if check == False:
+                    fake_board = copy.deepcopy(bard)
             if winStatus == True and winSym == symbol2:
                 og_row = row
                 og_col = col
                 break
-        turn += 1
         return og_row, og_col, sadness
             #finish later btw
     def minimax_test(board, symbol1, symbol2, turn):
+        global prevent
         print("Current Board:")
         print(TicTacToe.makeBoardPretty(board))
         if turn % 2 == 1:
@@ -164,10 +174,21 @@ class TicTacToe:
                 row = int(input("Pick a row: [upper row: 0, middle row: 1, lower row: 2]: "))
                 col = int(input("Pick a column: [left column: 0, middle column: 1, right column: 2]: "))
             board[row][col] = symbol1
-        if turn % 2 == 0:
             og_row, og_col, sadness = TicTacToe.minimax(board, symbol1, symbol2, turn)
-            board[og_row][og_col] = symbol2
-            print("Bot chose " + str(og_row) + " " + str(og_col))
+            if sadness == False:
+                prevent = False
+                global row_col
+                row_col = [og_row, og_col]
+            elif sadness == True:
+                prevent = True
+                
+        if turn % 2 == 0:
+            if prevent == False:
+                board[row_col[0]][row_col[1]] = symbol2
+            elif prevent == True:
+                og_row, og_col, sadness = TicTacToe.minimax(board, symbol1, symbol2, turn)
+                board[og_row][og_col] = symbol2
+                print("Bot chose " + str(og_row) + " " + str(og_col))
     def main(board, symbol1, symbol2):
         count = 1
         winner = False
@@ -177,6 +198,7 @@ class TicTacToe:
                 print("Game over!")
                 if winner == False:
                     print("There was a tie!")
+                    break
             TicTacToe.minimax_test(board, symbol1, symbol2, count)
             winner, winSym = TicTacToe.WinnerWinnerChickenDinner(board, symbol1, symbol2)
             count += 1
@@ -265,6 +287,7 @@ class simpleBattleship:
         plr_board = simpleBattleship.generateBoard()
         print("Welcome to Simple Battleship!")
         print("We have setup 2 ships behind the scenes..")
+        print("Each ship is 5 blocks long and can be placed vertically or horizontally.")
         print("You must destroy those ships!")
         print("Here is your own board, if you get a miss or hit, it will show here:")
         print(simpleBattleship.makeBoardPretty(plr_board))
@@ -292,7 +315,7 @@ class BullsAndCows:
             bulls = 0
             cows = 0
             guess = int(input("Guess a 4 digit number: "))
-            while len(str(guess)) > 4:
+            while len(str(guess)) < 4 or len(str(guess)) > 4:
                 print("Not a 4 digit number.")
                 guess = int(input("Guess a 4 digit number: "))
             guesses.append(guess)
@@ -413,7 +436,7 @@ class Unscramble:
         last_l = 0
         for i in range(len(randomW)):
             new_l = random.randint(0, len(randomW) - 1)
-            if last_l == new_l:
+            while last_l == new_l:
                 new_l = random.randint(0, len(randomW) - 1)
             last_l = new_l
             scrambled += randomW[new_l]
@@ -433,8 +456,14 @@ class Unscramble:
                 print("Congratuations! You guessed the word " + word + " in " + str(tries) + " try!")
                 exit()
         print("You were unable to guess the word! It was " + word + "!")
-        exit()   
-   
+        exit()
+'''
+board = [["x","x","0"],
+         ["o","0","0"],
+         ["0","0","0"]]
+turn = 3
+TicTacToe.minimax(board, "x", "o", turn)
+'''
 while True:
     print("Python Project")
     print("Games:")

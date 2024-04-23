@@ -255,7 +255,7 @@ class simpleBattleship:
                                 board[randomRow][randomCol+i] = "O"
                                 break
         return board
-    def hit(board,plr_board, hits):
+    def hit(board, bot_board, plr_board, hits):
         letters = ["a","b","c","d","e","f","g","h","i","j"]
         columns = ["1","2","3","4","5","6","7","8","9","10"]
         row = str(input("Input a row (A-J): "))
@@ -273,15 +273,77 @@ class simpleBattleship:
             hits += 1
             board[row][col-1] = "X"
             plr_board[row][col-1] = "X"
+            bot_board[row][col-1] = "K"
         elif board[row][col-1] == "X" or board[row][col-1] == "M":
             print("You already shot here!")
         else:
             print("It's a miss!")
             board[row][col-1] = "M"
+            bot_board[row][col-1] = "M"
             plr_board[row][col-1] = "M"
         print("Your updated board:")
         print(simpleBattleship.makeBoardPretty(plr_board))
+        print("Enemy Board:")
+        print(simpleBattleship.makeBoardPretty(board))
         return (board, plr_board, hits)
+    
+    def stinkwee(board, bot_board, plr_board, hits):
+        row = random.randint(0,9)
+        col = random.randint(0,9)
+        did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
+        while sym == "A" or sym == "K":
+            row = random.randint(0,9)
+            col = random.randint(0,9)
+            did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
+        did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
+        if did_hit == True:
+            hits += 1
+            if nr >= 0:
+                board[nr][nc] = "X"
+                bot_board[nr][nc] = "X"
+                plr_board[nr][nc] = "K"
+            else:
+                board[row][col] = "X"
+                bot_board[row][col] = "X"
+                plr_board[row][col] = "K"
+        elif did_hit == False and sym == "M":
+            board[row][col] = "M"
+            bot_board[row][col] = "M"
+            plr_board[row][col] = "M"
+        return board, bot_board, plr_board, hits
+    def is_a_hit(plr_board, row, col, hits):
+        did_hit = False
+        next_row = -1
+        next_col = -1
+        if plr_board[row][col] == "O":
+            did_hit = True
+            if row + 1 < 10:
+                if plr_board[row+1][col] == "O":
+                    next_row = row + 1
+                    next_col = col
+                elif col + 1 < 10:
+                    if plr_board[row][col+1] == "O":
+                        next_row = row
+                        next_col = col + 1
+                elif col + 1 > 10:
+                    if plr_board[row][col-1] == "O":
+                        next_row = row
+                        next_col = col - 1
+            else:
+                if plr_board[row-1][col] == "O":
+                    next_row = row - 1
+                    next_col = col
+            
+            return did_hit, "X", next_row, next_col
+        elif plr_board[row][col] == "M":
+            did_hit = False
+            return did_hit, "A", next_row, next_col
+        elif plr_board[row][col] == " ":
+            did_hit = False
+            return did_hit, "M", next_row, next_col
+        elif plr_board[row][col] == "K":
+            did_hit = False
+            return did_hit, "X", next_row, next_col
     def main():
         board = simpleBattleship.createShips(simpleBattleship.generateBoard())
         plr_board = simpleBattleship.generateBoard()
@@ -292,12 +354,18 @@ class simpleBattleship:
         print("Here is your own board, if you get a miss or hit, it will show here:")
         print(simpleBattleship.makeBoardPretty(plr_board))
         hits = 0
-        while hits < 10:
-            board, plr_board, hits = simpleBattleship.hit(board, plr_board, hits)
-        if hits == 10:
-            print("Congrats! You hit all the enemy ships!")
-            print("This was the enemy board: ")
-            print(simpleBattleship.makeBoardPretty(board))
+        bot_hits = 0
+        while True:
+            if hits == 10:
+                print("Congrats! You hit all the enemy ships!")
+                print("This was the enemy board: ")
+                print(simpleBattleship.makeBoardPretty(bot_board))
+            elif bot_hits == 10:
+                print("You lost. The enemy hit all your ships.")
+                print("This was the enemy board: ")
+                print(simpleBattleship.makeBoardPretty(bot_board))
+            
+        
 
 # bulls and cows is an old paper game. both players write a secret 4 digit number. they have to try to guess the other player's number, whoever does it first wins.
 # after a guess, the game gives you a certain number of bulls and cows. bulls meaning a number is correct and is in the correct spot
@@ -463,7 +531,7 @@ board = [["x","x","0"],
          ["0","0","0"]]
 turn = 3
 TicTacToe.minimax(board, "x", "o", turn)
-'''
+
 while True:
     print("Python Project")
     print("Games:")
@@ -488,6 +556,21 @@ while True:
         Hangman.main()
     elif option == 5:
         Unscramble.main()
+'''
+board = simpleBattleship.generateBoard()
+bot_board = simpleBattleship.generateBoard()
+plr_board = simpleBattleship.createShips(simpleBattleship.generateBoard())
+hits = 1
+
+while hits < 10:
+    board, bot_board, plr_board, hits = simpleBattleship.stinkwee(board, bot_board, plr_board, hits)
+    print("Board to show player")
+    print(simpleBattleship.makeBoardPretty(board))
+    print("Bot Board")
+    print(simpleBattleship.makeBoardPretty(bot_board))
+    print("Player board")
+    print(simpleBattleship.makeBoardPretty(plr_board))
+    
 # hangman start functions
 # Hangman.main()
 

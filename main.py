@@ -303,6 +303,10 @@ class simpleBattleship:
         row = random.randint(0,9)
         col = random.randint(0,9)
         did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
+        print(did_hit)
+        print(sym)
+        print(nr)
+        print(nc)
         while sym == "A" or sym == "K":
             row = random.randint(0,9)
             col = random.randint(0,9)
@@ -329,22 +333,23 @@ class simpleBattleship:
         next_col = -1
         if plr_board[row][col] == "O":
             did_hit = True
-            if row + 1 < 10:
-                if plr_board[row+1][col] == "O":
-                    next_row = row + 1
-                    next_col = col
-                elif col + 1 < 10:
-                    if plr_board[row][col+1] == "O":
-                        next_row = row
-                        next_col = col + 1
-                elif col + 1 > 10:
-                    if plr_board[row][col-1] == "O":
-                        next_row = row
-                        next_col = col - 1
-            else:
-                if plr_board[row-1][col] == "O":
-                    next_row = row - 1
-                    next_col = col
+            while next_row < 0:
+                if row + 1 < 10:
+                    if plr_board[row+1][col] == "O":
+                        next_row = row + 1
+                        next_col = col
+                    elif col + 1 < 10:
+                        if plr_board[row][col+1] == "O":
+                            next_row = row
+                            next_col = col + 1
+                    elif col + 1 > 10:
+                        if plr_board[row][col-1] == "O":
+                            next_row = row
+                            next_col = col - 1
+                else:
+                    if plr_board[row-1][col] == "O":
+                        next_row = row - 1
+                        next_col = col
             
             return did_hit, "X", next_row, next_col
         elif plr_board[row][col] == "M":

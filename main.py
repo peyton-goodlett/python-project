@@ -303,6 +303,7 @@ class simpleBattleship:
         row = random.randint(0,9)
         col = random.randint(0,9)
         did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
+        next_row, next_col = nr, nc
         print(did_hit)
         print(sym)
         print(nr)
@@ -312,16 +313,15 @@ class simpleBattleship:
             col = random.randint(0,9)
             did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
         did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
-        if did_hit == True:
+        if did_hit == True and next_row >= 0:
             hits += 1
-            if nr >= 0:
-                board[nr][nc] = "X"
-                bot_board[nr][nc] = "X"
-                plr_board[nr][nc] = "K"
-            else:
-                board[row][col] = "X"
-                bot_board[row][col] = "X"
-                plr_board[row][col] = "K"
+            board[next_row][next_col] = "X"
+            bot_board[next_row][next_col] = "X"
+            plr_board[next_row][next_col] = "K"
+        elif did_hit == True and next_row < 0:
+            board[row][col] = "X"
+            bot_board[row][col] = "X"
+            plr_board[row][col] = "K"
         elif did_hit == False and sym == "M":
             board[row][col] = "M"
             bot_board[row][col] = "M"

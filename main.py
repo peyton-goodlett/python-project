@@ -1,6 +1,7 @@
 # Peyton Goodlett
 import random
 import copy
+import time
 # using classes to organize games better
 class TicTacToe:
     def init_Board():
@@ -229,30 +230,41 @@ class simpleBattleship:
         for i in range(rows):
             print(letters[i] + " ", end=' ')
             print(board[i])
+    # improve seeding later
     def createShips(board):
         for z in range(2):
             randomDir = random.choice(["horizontal", "vertical"])
-            randomRow = random.randint(1, 9)
-            randomCol = random.randint(1, 9)
+            randomRow = random.randint(0, 9)
+            randomCol = random.randint(0, 9)
+            print(randomRow)
+            print(randomCol)
             for x in range(5):
                 for i in range(5):
                     if randomDir == "horizontal":
                         if randomRow+i >= 9:
                             if board[randomRow-i][randomCol] == ' ':
                                 board[randomRow-i][randomCol] = "O"
+                                print(randomRow-i)
+                                print(randomCol)
                                 break
                         else:
                             if board[randomRow+i][randomCol] == " ":
                                 board[randomRow+i][randomCol] = "O"
+                                print(randomRow+i)
+                                print(randomCol)
                                 break
-                    else:
+                    elif randomDir == "vertical":
                         if randomCol+i >= 9:
                             if board[randomRow][randomCol-i] == " ":
                                 board[randomRow][randomCol-i] = "O"
+                                print(randomRow)
+                                print(randomCol-i)
                                 break
                         else:
                             if board[randomRow][randomCol+i] == " ":
                                 board[randomRow][randomCol+i] = "O"
+                                print(randomRow+i)
+                                print(randomCol)
                                 break
         return board
     def hit(board, bot_board, plr_board, hits):
@@ -285,9 +297,9 @@ class simpleBattleship:
         print(simpleBattleship.makeBoardPretty(plr_board))
         print("Enemy Board:")
         print(simpleBattleship.makeBoardPretty(board))
-        return (board, plr_board, hits)
+        return (board, bot_board, plr_board, hits)
     
-    def stinkwee(board, bot_board, plr_board, hits):
+    def bot(board, bot_board, plr_board, hits):
         row = random.randint(0,9)
         col = random.randint(0,9)
         did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
@@ -309,7 +321,7 @@ class simpleBattleship:
         elif did_hit == False and sym == "M":
             board[row][col] = "M"
             bot_board[row][col] = "M"
-            plr_board[row][col] = "M"
+            plr_board[row][col] = "E"
         return board, bot_board, plr_board, hits
     def is_a_hit(plr_board, row, col, hits):
         did_hit = False
@@ -345,12 +357,20 @@ class simpleBattleship:
             did_hit = False
             return did_hit, "X", next_row, next_col
     def main():
-        board = simpleBattleship.createShips(simpleBattleship.generateBoard())
-        plr_board = simpleBattleship.generateBoard()
+        bot_board = simpleBattleship.createShips(simpleBattleship.generateBoard())
+        board = simpleBattleship.generateBoard()
+        plr_board = simpleBattleship.createShips(simpleBattleship.generateBoard())
+        
         print("Welcome to Simple Battleship!")
         print("We have setup 2 ships behind the scenes..")
         print("Each ship is 5 blocks long and can be placed vertically or horizontally.")
         print("You must destroy those ships!")
+        print("Letter meanings:")
+        print("O: Your own ships")
+        print("X: A destroyed part of an enemy ship")
+        print("K: A destroyed part of your own shop")
+        print("M: Your own miss")
+        print("E: An enemy miss")
         print("Here is your own board, if you get a miss or hit, it will show here:")
         print(simpleBattleship.makeBoardPretty(plr_board))
         hits = 0
@@ -360,12 +380,19 @@ class simpleBattleship:
                 print("Congrats! You hit all the enemy ships!")
                 print("This was the enemy board: ")
                 print(simpleBattleship.makeBoardPretty(bot_board))
+                break
             elif bot_hits == 10:
                 print("You lost. The enemy hit all your ships.")
                 print("This was the enemy board: ")
                 print(simpleBattleship.makeBoardPretty(bot_board))
-            
-        
+                break
+            board, bot_board, plr_board, hits = simpleBattleship.hit(board, bot_board, plr_board, hits)
+            time.sleep(3)
+            print("The enemy made a shot! Updated board:")
+            board, bot_board, plr_board, bot_hits = simpleBattleship.bot(board, bot_board, plr_board, bot_hits)
+            print(simpleBattleship.makeBoardPretty(plr_board))
+            print("Updated enemy board:")
+            print(simpleBattleship.makeBoardPretty(board))        
 
 # bulls and cows is an old paper game. both players write a secret 4 digit number. they have to try to guess the other player's number, whoever does it first wins.
 # after a guess, the game gives you a certain number of bulls and cows. bulls meaning a number is correct and is in the correct spot
@@ -557,20 +584,6 @@ while True:
     elif option == 5:
         Unscramble.main()
 '''
-board = simpleBattleship.generateBoard()
-bot_board = simpleBattleship.generateBoard()
-plr_board = simpleBattleship.createShips(simpleBattleship.generateBoard())
-hits = 1
-
-while hits < 10:
-    board, bot_board, plr_board, hits = simpleBattleship.stinkwee(board, bot_board, plr_board, hits)
-    print("Board to show player")
-    print(simpleBattleship.makeBoardPretty(board))
-    print("Bot Board")
-    print(simpleBattleship.makeBoardPretty(bot_board))
-    print("Player board")
-    print(simpleBattleship.makeBoardPretty(plr_board))
-    
 # hangman start functions
 # Hangman.main()
 
@@ -583,7 +596,5 @@ while hits < 10:
 # TicTacToe.main(board, symbol1, symbol2)
 
 # battleship start function
-# simpleBattleship.main()
-
+simpleBattleship.main()
 # for checking if the ship generation works properly
-# print(simpleBattleship.makeBoardPretty(simpleBattleship.createShips(simpleBattleship.generateBoard())))

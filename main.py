@@ -236,8 +236,6 @@ class simpleBattleship:
             randomDir = random.choice(["horizontal", "vertical"])
             randomRow = random.randint(0, 9)
             randomCol = random.randint(0, 9)
-            print(randomRow)
-            print(randomCol)
             for x in range(5):
                 for i in range(5):
                     if randomDir == "horizontal":
@@ -333,24 +331,22 @@ class simpleBattleship:
         next_col = -1
         if plr_board[row][col] == "O":
             did_hit = True
-            while next_row < 0:
-                if row + 1 < 10:
-                    if plr_board[row+1][col] == "O":
-                        next_row = row + 1
-                        next_col = col
-                    elif col + 1 < 10:
-                        if plr_board[row][col+1] == "O":
-                            next_row = row
-                            next_col = col + 1
-                    elif col + 1 > 10:
-                        if plr_board[row][col-1] == "O":
-                            next_row = row
-                            next_col = col - 1
-                else:
-                    if plr_board[row-1][col] == "O":
-                        next_row = row - 1
-                        next_col = col
-            
+            if row + 1 < 10:
+                if plr_board[row+1][col] == "O":
+                    next_row = row + 1
+                    next_col = col
+                elif col + 1 < 10:
+                    if plr_board[row][col+1] == "O":
+                        next_row = row
+                        next_col = col + 1
+                elif col + 1 > 10:
+                    if plr_board[row][col-1] == "O":
+                        next_row = row
+                        next_col = col - 1
+            else:
+                if plr_board[row-1][col] == "O":
+                    next_row = row - 1
+                    next_col = col
             return did_hit, "X", next_row, next_col
         elif plr_board[row][col] == "M":
             did_hit = False
@@ -373,7 +369,7 @@ class simpleBattleship:
         print("Letter meanings:")
         print("O: Your own ships")
         print("X: A destroyed part of an enemy ship")
-        print("K: A destroyed part of your own shop")
+        print("K: A destroyed part of your own ship")
         print("M: Your own miss")
         print("E: An enemy miss")
         print("Here is your own board, if you get a miss or hit, it will show here:")
@@ -392,9 +388,9 @@ class simpleBattleship:
                 print(simpleBattleship.makeBoardPretty(bot_board))
                 break
             board, bot_board, plr_board, hits = simpleBattleship.hit(board, bot_board, plr_board, hits)
-            time.sleep(3)
-            print("The enemy made a shot! Updated board:")
             board, bot_board, plr_board, bot_hits = simpleBattleship.bot(board, bot_board, plr_board, bot_hits)
+            time.sleep(2)
+            print("The enemy made a shot! Updated board:")
             print(simpleBattleship.makeBoardPretty(plr_board))
             print("Updated enemy board:")
             print(simpleBattleship.makeBoardPretty(board))        
@@ -411,8 +407,10 @@ class BullsAndCows:
         print('If a digit in the number you guess is correct and in the correct spot, you will get 1 bull (B).')
         print('If a digit is correct but not in the correct spot, you will get a cow (C).')
         print('You get 15 guesses total!')
+        print(bot_num)
         while len(guesses) <= 15:
             bulls = 0
+            bulls_l = []
             cows = 0
             guess = int(input("Guess a 4 digit number: "))
             while len(str(guess)) < 4 or len(str(guess)) > 4:
@@ -426,13 +424,15 @@ class BullsAndCows:
             for i in range(len(str(bot_num))):
                 if str(guess)[i] == str(bot_num)[i]:
                     bulls += 1
-                elif str(guess)[i] != str(bot_num)[i] and str(guess)[i] in str(bot_num):
+                    bulls_l.append(str(guess)[i])
+                elif str(guess)[i] != str(bot_num)[i] and str(guess)[i] in str(bot_num) and str(guess)[i] not in bulls_l:
                     cows += 1
             print(str(bulls) + " Bulls " + str(cows) + " Cows")
             print("All Guesses:")
             for i in range(len(guesses)):
                 print(str(i + 1) + " " + str(guesses[i]))
         print("No more guesses! Game over :(")
+        
 class Hangman:
     def main():
         wordbank = "dog cat wolf quentin mason william theron peyton printer electric zebra lion rhino laptop computer ilead hangman video analyze school homework class classroom goose table chair abdominous train big boulder pasta document google fortnite roblox minecraft nike hoodie buxom bologna tsunami island ocean believe".split()
@@ -601,5 +601,6 @@ while True:
 # TicTacToe.main(board, symbol1, symbol2)
 
 # battleship start function
+# simpleBattleship.main()
 simpleBattleship.main()
 # for checking if the ship generation works properly

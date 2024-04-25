@@ -2,6 +2,7 @@
 import random
 import copy
 import time
+from pyfiglet import Figlet
 # using classes to organize games better
 class TicTacToe:
     def init_Board():
@@ -11,8 +12,10 @@ class TicTacToe:
         return board
     def makeBoardPretty(board):
         rows = len(board)
+        
+        print("  0 1 2")
         for i in range(rows):
-            print(board[i][0] + "|" + board[i][1] + "|" + board[i][2])
+            print(str(i) + " " + board[i][0] + "|" + board[i][1] + "|" + board[i][2])
     def plrSymbols():
         symbol1 = str(input("Please choose a symbol for player 1 (X, O): "))
         while symbol1.lower() not in "xo":
@@ -87,6 +90,7 @@ class TicTacToe:
     def minimax(the_board, symbol1, symbol2, turn):
         og_row = "None"
         og_col = "None"
+        times = 0
         bard = copy.deepcopy(the_board)
         sadness = True
         while turn % 2 == 1:
@@ -114,9 +118,12 @@ class TicTacToe:
                 break
             break
         while turn % 2 == 0:
+            if sadness == False:
+                break
             fake_board = copy.deepcopy(bard)
             row = random.randint(0,2)
             col = random.randint(0,2)
+            times += 1
             sym1row = random.randint(0,2)
             sym1col = random.randint(0,2)
             while fake_board[row][col] != "0":
@@ -146,9 +153,9 @@ class TicTacToe:
                 fake_board[sym1row][sym1col] = symbol1
                 winStatus, winSym = TicTacToe.WinnerWinnerChickenDinner(fake_board, symbol1, symbol2)
                 check = any("0" in sublist for sublist in fake_board)
-                if check == False:
-                    fake_board = copy.deepcopy(bard)
-            if winStatus == True and winSym == symbol2:
+                if check == False or times == 19683:
+                    break
+            if winStatus == True and winSym == symbol2 or times == 19683:
                 og_row = row
                 og_col = col
                 break
@@ -190,7 +197,7 @@ class TicTacToe:
                 og_row, og_col, sadness = TicTacToe.minimax(board, symbol1, symbol2, turn)
                 board[og_row][og_col] = symbol2
                 print("Bot chose " + str(og_row) + " " + str(og_col))
-    def main(board, symbol1, symbol2):
+    def main(board, symbol1, symbol2, opp):
         count = 1
         winner = False
 
@@ -199,13 +206,18 @@ class TicTacToe:
                 print("Game over!")
                 if winner == False:
                     print("There was a tie!")
+                    print(TicTacToe.makeBoardPretty(board))
                     break
-            TicTacToe.minimax_test(board, symbol1, symbol2, count)
+            if opp > 0:
+                TicTacToe.gaming(board, symbol1, symbol2, count)
+            else:
+                TicTacToe.minimax_test(board, symbol1, symbol2, count)
             winner, winSym = TicTacToe.WinnerWinnerChickenDinner(board, symbol1, symbol2)
             count += 1
             if winner == True:
                 print("Game over!")
                 print(winSym.upper() + " won!")
+                print(TicTacToe.makeBoardPretty(board))
 
 class simpleBattleship:
     def generateBoard():
@@ -563,9 +575,10 @@ board = [["x","x","0"],
          ["0","0","0"]]
 turn = 3
 TicTacToe.minimax(board, "x", "o", turn)
-
+'''
 while True:
-    print("Python Project")
+    f = Figlet(font='slant')
+    print(f.renderText('Python Project'))
     print("Games:")
     print("1. TicTacToe")
     print("2. Simple Battleship")
@@ -577,9 +590,12 @@ while True:
         print("Invalid option.")
         option = int(input("Enter a number to play a game: "))
     if option == 1:
+        opp = int(input("Would you like to play against a player or a bot (0 for bot, 1 for player): "))
+        while opp > 1 or opp < 0:
+            opp = int(input("Would you like to play against a player or a bot (0 for bot, 1 for player): "))
         board = TicTacToe.init_Board()
         symbol1, symbol2 = TicTacToe.plrSymbols()
-        TicTacToe.main(board, symbol1, symbol2)
+        TicTacToe.main(board, symbol1, symbol2,opp)
     elif option == 2:
         simpleBattleship.main()
     elif option == 3:
@@ -588,7 +604,6 @@ while True:
         Hangman.main()
     elif option == 5:
         Unscramble.main()
-'''
 # hangman start functions
 # Hangman.main()
 
@@ -602,5 +617,5 @@ while True:
 
 # battleship start function
 # simpleBattleship.main()
-simpleBattleship.main()
+# simpleBattleship.main()
 # for checking if the ship generation works properly

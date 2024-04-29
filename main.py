@@ -244,38 +244,29 @@ class simpleBattleship:
             print(board[i])
     # improve seeding later
     def createShips(board):
-        for z in range(2):
-            randomDir = random.choice(["horizontal", "vertical"])
-            randomRow = random.randint(0, 9)
-            randomCol = random.randint(0, 9)
-            for x in range(5):
-                for i in range(5):
-                    if randomDir == "horizontal":
-                        if randomRow+i >= 9:
-                            if board[randomRow-i][randomCol] == ' ':
-                                board[randomRow-i][randomCol] = "O"
-                                print(randomRow-i)
-                                print(randomCol)
-                                break
-                        else:
-                            if board[randomRow+i][randomCol] == " ":
-                                board[randomRow+i][randomCol] = "O"
-                                print(randomRow+i)
-                                print(randomCol)
-                                break
-                    elif randomDir == "vertical":
-                        if randomCol+i >= 9:
-                            if board[randomRow][randomCol-i] == " ":
-                                board[randomRow][randomCol-i] = "O"
-                                print(randomRow)
-                                print(randomCol-i)
-                                break
-                        else:
-                            if board[randomRow][randomCol+i] == " ":
-                                board[randomRow][randomCol+i] = "O"
-                                print(randomRow+i)
-                                print(randomCol)
-                                break
+        ship_sizes = [2, 3, 3, 4, 5]
+        for i in range(len(ship_sizes)):
+            randomR = random.randint(0,9)
+            randomC = random.randint(0,9)
+            while board[randomR][randomC] != " ":
+                randomR = random.randint(0,9)
+                randomC = random.randint(0,9)
+            randomD = random.choice(["horizontal", "vertical"])
+            for z in range(ship_sizes[i]):
+                if randomD == "horizontal":
+                    if randomR + ship_sizes[i] <= 9:
+                        if board[randomR+z][randomC] == " ":
+                                board[randomR + z][randomC] = "O"
+                    elif randomR + ship_sizes[i] > 9:
+                        if board[randomR - z][randomC] == " ":
+                            board[randomR - z][randomC] = "O"
+                elif randomD == "vertical":
+                    if randomC + ship_sizes[i] <= 9:
+                        if board[randomR][randomC + z] == " ":
+                            board[randomR][randomC+z] = "O"
+                    elif randomC + ship_sizes[i] > 9:
+                        if board[randomR][randomC - z] == " ":
+                            board[randomR][randomC - z] = "O"
         return board
     def hit(board, bot_board, plr_board, hits):
         letters = ["a","b","c","d","e","f","g","h","i","j"]
@@ -314,10 +305,12 @@ class simpleBattleship:
         col = random.randint(0,9)
         did_hit, sym, nr, nc = simpleBattleship.is_a_hit(plr_board, row, col, hits)
         next_row, next_col = nr, nc
-        print(did_hit)
-        print(sym)
-        print(nr)
-        print(nc)
+        if nr >= 0:
+            hits += 1
+            board[next_row][next_col] = "X"
+            bot_board[next_row][next_col] = "X"
+            plr_board[next_row][next_col] = "K"
+            return board, bot_board, plr_board, hits
         while sym == "A" or sym == "K":
             row = random.randint(0,9)
             col = random.randint(0,9)
@@ -375,9 +368,9 @@ class simpleBattleship:
         plr_board = simpleBattleship.createShips(simpleBattleship.generateBoard())
         
         print("Welcome to Simple Battleship!")
-        print("We have setup 2 ships behind the scenes..")
-        print("Each ship is 5 blocks long and can be placed vertically or horizontally.")
-        print("You must destroy those ships!")
+        print("We have setup 5 ships behind the scenes..")
+        print("Each ship is 2, 3, 3, 4, 5 blocks long and can be placed vertically or horizontally.")
+        print("You only need to hit 15 parts.")
         print("Letter meanings:")
         print("O: Your own ships")
         print("X: A destroyed part of an enemy ship")
@@ -389,12 +382,12 @@ class simpleBattleship:
         hits = 0
         bot_hits = 0
         while True:
-            if hits == 10:
+            if hits == 15:
                 print("Congrats! You hit all the enemy ships!")
                 print("This was the enemy board: ")
                 print(simpleBattleship.makeBoardPretty(bot_board))
                 break
-            elif bot_hits == 10:
+            elif bot_hits == 15:
                 print("You lost. The enemy hit all your ships.")
                 print("This was the enemy board: ")
                 print(simpleBattleship.makeBoardPretty(bot_board))
@@ -604,6 +597,7 @@ while True:
         Hangman.main()
     elif option == 5:
         Unscramble.main()
+    
 # hangman start functions
 # Hangman.main()
 
